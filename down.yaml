@@ -2,10 +2,6 @@
 - name: Start and maintain database
   hosts: localhost
   tasks:
-
-  - name: Ansible hello world
-    ansible.builtin.debug:
-      msg: Hello from ansible in up.yaml
   - name: stop mysql
     ansible.builtin.shell: sudo service mysql stop > /tmp/mysqldown.txt
     args:
