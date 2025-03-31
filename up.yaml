@@ -20,7 +20,7 @@
     register: migration_files
   - name: Apply Flyway migrations
     ansible.builtin.shell: |
-      flyway -url=jdbc:mysql://localhost:3306/subscriptions -user=root -password=admin8960392 -locations=filesystem:/migrations migrate
+      flyway -url=jdbc:mysql://localhost:3306/subscriptions -user=root -password=admin8960392 -locations=filesystem:migrations -baselineOnMigrate=true migrate
     register: flyway_migrate
     changed_when: flyway_migrate.rc == 0
     when: migration_files.matched > 0
