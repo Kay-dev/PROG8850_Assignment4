@@ -10,8 +10,21 @@
     ansible.builtin.shell: sudo service mysql start > /tmp/mysql.txt
     args:
       creates: /tmp/mysql.txt
-  - name: created database
-    ansible.builtin.shell: sudo mysql -u root < migrations/createdb.sql
+  - name: created database if not exist
+    ansible.builtin.shell: sudo mysql -u root -padmin8960392 < createdb.sql
+
+  - name: check for migration files
+    ansible.builtin.find:
+      paths: /path/to/migrations
+      patterns: "*.sql"
+    register: migration_files
+  - name: Apply Flyway migrations
+    ansible.builtin.shell: |
+      flyway -url=jdbc:mysql://localhost:3306/subscriptions -user=root -password=admin8960392 -locations=filesystem:/migrations migrate
+    register: flyway_migrate
+    changed_when: flyway_migrate.rc == 0
+    when: migration_files.matched > 0
+
 
 
 

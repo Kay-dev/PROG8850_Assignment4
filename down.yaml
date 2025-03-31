@@ -2,6 +2,15 @@
 - name: Start and maintain database
   hosts: localhost
   tasks:
+  - name: Create a migration
+    ansible.builtin.shell: |
+      timestamp=$(date +"%Y%m%d%H%M%S")
+      backup_filename="V${timestamp}__backup_data.sql"
+      mysqldump -u root -padmin8960392 subscriptions -h 127.0.0.1 > "migrations/$backup_filename"
+      echo "Created migration: $backup_filename"
+    register: flyway_backup
+    changed_when: flyway_backup.rc == 0
+
   - name: stop mysql
     ansible.builtin.shell: sudo service mysql stop > /tmp/mysqldown.txt
     args:
@@ -10,5 +19,4 @@
     ansible.builtin.file:
       path: /tmp/mysql.txt
       state: absent
-
 
