@@ -2,6 +2,7 @@
 - name: Start and maintain database
   hosts: localhost
   tasks:
+  # create a new migration from database "subscriptions"
   - name: Create a migration
     ansible.builtin.shell: |
       timestamp=$(date +"%Y%m%d%H%M%S")
@@ -15,6 +16,8 @@
     ansible.builtin.shell: sudo service mysql stop > /tmp/mysqldown.txt
     args:
       creates: /tmp/mysqldown.txt
+  
+  # clear log
   - name: Remove mysql.txt file (delete file)
     ansible.builtin.file:
       path: /tmp/mysql.txt

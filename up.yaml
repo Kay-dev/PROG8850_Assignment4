@@ -2,22 +2,29 @@
 - name: Start and maintain database
   hosts: localhost
   tasks:
+  # clear log
   - name: Remove mysql.txt file (delete file)
     ansible.builtin.file:
       path: /tmp/mysqldown.txt
       state: absent
+
   - name: start mysql
     ansible.builtin.shell: sudo service mysql start > /tmp/mysql.txt
     args:
       creates: /tmp/mysql.txt
+
+  # init database and table structure
   - name: created database if not exist
     ansible.builtin.shell: sudo mysql -u root -padmin8960392 < createdb.sql
 
+  # check if migrations exists
   - name: check for migration files
     ansible.builtin.find:
       paths: /path/to/migrations
       patterns: "*.sql"
     register: migration_files
+
+  # restore data from migration file to mysql
   - name: Apply Flyway migrations
     ansible.builtin.shell: |
       flyway -url=jdbc:mysql://localhost:3306/subscriptions -user=root -password=admin8960392 -locations=filesystem:migrations -baselineOnMigrate=true migrate
